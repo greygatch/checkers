@@ -1,6 +1,7 @@
 'use strict';
 var current = 'ruby';
 var $selected;
+var middleVals = [];
 
 $(document).ready(init);
 
@@ -67,12 +68,12 @@ function movePiece($selected, $target){
 
 function moveType(src, tgt, compass, isKing){
 
-  if (isMove(src, tgt, compass, isKing)){
-    return 'move';
-  }
-
   if (isJump(src, tgt, compass, isKing) && isEnemy(src, tgt, compass, isKing)){
     return 'jump';
+  }
+
+  if (isMove(src, tgt, compass, isKing)){
+    return 'move';
   }
 }
 
@@ -88,21 +89,27 @@ function isMove(src, tgt, compass, isKing){
 }
 
 function isJump(src, tgt, compass, isKing){
+
+  var checkEast = compass.east * 2
+  var checkWest = compass.west * 2
+  var checkNorth = compass.north * 2
+  var compassSouth = compass.south * 2
+
   // fix
-  return (src.x + (compass.east * 2) === tgt.x || src.x + (compass.west * 2) === tgt.x) && (src.y + (compass.north * 2) === tgt.y) || (src.y + (compass.south * 2) === tgt.y) || (isKing && src.y + (compass.south * 2) === tgt.y);
+  return (src.x + checkEast === tgt.x || src.x + checkWest === tgt.x) && (src.y + checkNorth === tgt.y) || (src.y + compassSouth === tgt.y) || (isKing && src.y + compassSouth === tgt.y);
 }
 
 function isEnemy(src, tgt, compass, isKing){
   console.log(src, tgt);
   var checkX = (src.x + tgt.x) / 2;
   var checkY = (src.y + tgt.y) / 2;
+  console.log("one")
   var middle = $('td').data('x', checkX).data('y', checkY);
-  if(middle.hasClass('player', 'inactive')){
-    middle.removeClass('player', 'ruby', 'js');
+  if ($('td').data('x', checkX) && $('td').data('y', checkY)){
+    console.log('success');
     return true;
   }
   return false;
-  }
 }
 
 function switchBoard(){
