@@ -52,6 +52,8 @@ function drop(){
       break;
     case 'jump':
       console.log('jump');
+      switchBoard();
+      movePiece($selected, $target);
   }
 }
 
@@ -69,33 +71,42 @@ function moveType(src, tgt, compass, isKing){
     return 'move';
   }
 
-  if (isJump() && isEnemy()){
+  if (isJump(src, tgt, compass, isKing) && isEnemy(src, tgt, compass, isKing)){
     return 'jump';
   }
 }
 
 function initBoard(){
-  $('#board tr:lt(4) .valid').addClass('ruby player');
-  $('#board tr:gt(5) .valid').addClass('js player');
+  $('#board tr:lt(3) .valid').addClass('ruby player');
+  $('#board tr:gt(4) .valid').addClass('js player');
   $('td.valid:not(.player)').addClass('empty');
 }
 
 function isMove(src, tgt, compass, isKing){
   // if tgt is left o right, north or south, is a king and  can go south
-  return (src.x + compass.east === tgt.x || src.x + compass.west === tgt.x) && (src.y + compass.north === tgt.y) || (src.y + compass.south === tgt.y) || (isKing && src.y + compass.south === tgt.y));
+  return (src.x + compass.east === tgt.x || src.x + compass.west === tgt.x) && (src.y + compass.north === tgt.y) || (src.y + compass.south === tgt.y) || (isKing && src.y + compass.south === tgt.y);
 }
 
 function isJump(src, tgt, compass, isKing){
   // fix
-  return (src.x + (compass.east + 2) === tgt.x || src.x + (compass.west + 2) && (src.y + (compass.north + 2) === tgt.y ||
+  return (src.x + (compass.east * 2) === tgt.x || src.x + (compass.west * 2) === tgt.x) && (src.y + (compass.north * 2) === tgt.y) || (src.y + (compass.south * 2) === tgt.y) || (isKing && src.y + (compass.south * 2) === tgt.y);
 }
 
-function isEnemy(){
-
+function isEnemy(src, tgt, compass, isKing){
+  console.log(src, tgt);
+  var checkX = (src.x + tgt.x) / 2;
+  var checkY = (src.y + tgt.y) / 2;
+  var middle = $('td').data('x', checkX).data('y', checkY);
+  if(middle.hasClass('player', 'inactive')){
+    middle.removeClass('player', 'ruby', 'js');
+    return true;
+  }
+  return false;
+  }
 }
 
 function switchBoard(){
   current = (current === 'js') ? 'ruby' : 'js';
-  $('.valid').removeClass('active selected');
+  $('.valid').removeClass('active selected').addClass('inactive');
   $('.' + current).addClass('active');
 }
