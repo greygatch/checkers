@@ -1,7 +1,7 @@
 'use strict';
 var current = 'ruby';
 var $selected;
-var middleVals = [];
+var enemy = 'red';
 
 $(document).ready(init);
 
@@ -54,7 +54,10 @@ function drop(){
     case 'jump':
       console.log('jump');
       switchBoard();
+      var trackColor = $selected.css('background-color');
       movePiece($selected, $target);
+      $selected.addClass('empty black')
+      $target.css('background-color', trackColor).addClass('player inactive');
   }
 }
 
@@ -80,7 +83,7 @@ function moveType(src, tgt, compass, isKing){
 function initBoard(){
   $('#board tr:lt(3) .valid').addClass('ruby player');
   $('#board tr:gt(4) .valid').addClass('js player');
-  $('td.valid:not(.player)').addClass('empty');
+  $('td.valid:not(.player)').addClass('empty black');
 }
 
 function isMove(src, tgt, compass, isKing){
@@ -100,13 +103,23 @@ function isJump(src, tgt, compass, isKing){
 }
 
 function isEnemy(src, tgt, compass, isKing){
-  console.log(src, tgt);
-  var checkX = (src.x + tgt.x) / 2;
-  var checkY = (src.y + tgt.y) / 2;
-  console.log("one")
-  var middle = $('td').data('x', checkX).data('y', checkY);
-  if ($('td').data('x', checkX) && $('td').data('y', checkY)){
-    console.log('success');
+
+  enemy = (current === 'ruby') ? 'ruby' : 'js';
+  $('.valid').removeClass('enemy');
+  $('.' + current).addClass('enemy');
+
+  var checkX = ((src.x + tgt.x) / 2);
+  checkX = checkX.toString();
+  var checkY = ((src.y + tgt.y) / 2).toString();
+  checkY = checkY.toString();
+  var $middle = $('td[data-x=' + checkX + '][data-y='+ checkY +']');
+  console.log($middle[0]);
+  $middle = $middle[0];
+
+
+  if ($($middle).hasClass('player')){
+    console.log('current test');
+    $($middle).removeClass().addClass('empty black').css('background-color', 'black');
     return true;
   }
   return false;
