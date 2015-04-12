@@ -20,6 +20,8 @@ function select(){
   $selected.addClass('selected');
 }
 
+
+//manipulate drop function
 function drop(){
 
   if (!$selected) {
@@ -56,8 +58,8 @@ function drop(){
       switchBoard();
       var trackColor = $selected.css('background-color');
       movePiece($selected, $target);
-      $selected.addClass('empty black')
-      $target.css('background-color', trackColor).addClass('player inactive');
+      $selected.addClass('empty black');
+      $target.addClass('player');
   }
 }
 
@@ -67,6 +69,7 @@ function movePiece($selected, $target){
 
   $target.attr('class', selectedClasses);
   $selected.attr('class', targetClasses);
+
 }
 
 function moveType(src, tgt, compass, isKing){
@@ -88,18 +91,17 @@ function initBoard(){
 
 function isMove(src, tgt, compass, isKing){
   // if tgt is left o right, north or south, is a king and  can go south
-  return (src.x + compass.east === tgt.x || src.x + compass.west === tgt.x) && (src.y + compass.north === tgt.y) || (src.y + compass.south === tgt.y) || (isKing && src.y + compass.south === tgt.y);
+  return (src.x + compass.east === tgt.x || src.x + compass.west === tgt.x) && (src.y + compass.north === tgt.y)/* || (src.y + compass.south === tgt.y)*/ || (isKing && src.y + compass.south === tgt.y);
 }
 
 function isJump(src, tgt, compass, isKing){
 
-  var checkEast = compass.east * 2
-  var checkWest = compass.west * 2
-  var checkNorth = compass.north * 2
-  var compassSouth = compass.south * 2
+  var checkEast = compass.east * 2;
+  var checkWest = compass.west * 2;
+  var checkNorth = compass.north * 2;
+  var compassSouth = compass.south * 2;
 
-  // fix
-  return (src.x + checkEast === tgt.x || src.x + checkWest === tgt.x) && (src.y + checkNorth === tgt.y) || (src.y + compassSouth === tgt.y) || (isKing && src.y + compassSouth === tgt.y);
+  return (src.x + checkEast === tgt.x || src.x + checkWest === tgt.x) && (src.y + checkNorth === tgt.y)/* || (src.y + compassSouth === tgt.y) */ || (isKing && src.y + compassSouth === tgt.y);
 }
 
 function isEnemy(src, tgt, compass, isKing){
@@ -119,7 +121,7 @@ function isEnemy(src, tgt, compass, isKing){
 
   if ($($middle).hasClass('player')){
     console.log('current test');
-    $($middle).removeClass().addClass('empty black').css('background-color', 'black');
+    $($middle).removeClass().addClass('valid empty black');
     return true;
   }
   return false;
