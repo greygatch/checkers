@@ -55,11 +55,17 @@ function drop(){
       break;
     case 'jump':
       console.log('jump');
-      switchBoard();
-      var trackColor = $selected.css('background-color');
       movePiece($selected, $target);
       $selected.addClass('empty black');
       $target.addClass('player');
+
+      checkDouble()
+  }
+}
+
+function checkDouble(){
+  if (isJump(src, tgt, compass, isKing) && isEnemy(src, tgt, compass, isKing)){
+    switchBoard();
   }
 }
 
@@ -67,8 +73,15 @@ function movePiece($selected, $target){
   var targetClasses = $target.attr('class');
   var selectedClasses = $selected.attr('class');
 
+
   $target.attr('class', selectedClasses);
   $selected.attr('class', targetClasses);
+
+  console.log($target.data('y'));
+
+  // add king classes
+  $target.data('y') === 0 ? $target.addClass('king kingJS') : console.log();
+  $target.data('y') === 7 ? $target.addClass('king kingRuby') : console.log();
 
 }
 
@@ -91,7 +104,7 @@ function initBoard(){
 
 function isMove(src, tgt, compass, isKing){
   // if tgt is left o right, north or south, is a king and  can go south
-  return (src.x + compass.east === tgt.x || src.x + compass.west === tgt.x) && (src.y + compass.north === tgt.y)/* || (src.y + compass.south === tgt.y)*/ || (isKing && src.y + compass.south === tgt.y);
+  return (src.x + compass.east === tgt.x || src.x + compass.west === tgt.x) && (src.y + compass.north === tgt.y) || (src.x + compass.east === tgt.x || src.x + compass.west === tgt.x) && (isKing && src.y + compass.south === tgt.y);
 }
 
 function isJump(src, tgt, compass, isKing){
@@ -101,7 +114,7 @@ function isJump(src, tgt, compass, isKing){
   var checkNorth = compass.north * 2;
   var compassSouth = compass.south * 2;
 
-  return (src.x + checkEast === tgt.x || src.x + checkWest === tgt.x) && (src.y + checkNorth === tgt.y)/* || (src.y + compassSouth === tgt.y) */ || (isKing && src.y + compassSouth === tgt.y);
+  return (src.x + checkEast === tgt.x || src.x + checkWest === tgt.x) && (src.y + checkNorth === tgt.y) || (src.x + checkEast === tgt.x || src.x + checkWest === tgt.x) && (isKing && src.y + compassSouth === tgt.y);
 }
 
 function isEnemy(src, tgt, compass, isKing){
@@ -131,4 +144,10 @@ function switchBoard(){
   current = (current === 'js') ? 'ruby' : 'js';
   $('.valid').removeClass('active selected').addClass('inactive');
   $('.' + current).addClass('active');
+}
+
+
+// is king function
+function isKing(src, tgt, compass){
+  return $selected.hasClass('king');
 }
