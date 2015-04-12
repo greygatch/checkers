@@ -8,8 +8,9 @@ $(document).ready(init);
 function init(){
   initBoard();
   switchBoard();
+  winGame();
 
-  // only allow active clas to be clicked
+  // only allow active class to be clicked
   $('#board').on('click', '.active', select);
   $('#board').on('click', '.empty', drop);
 }
@@ -54,18 +55,15 @@ function drop(){
       movePiece($selected, $target);
       break;
     case 'jump':
-      console.log('jump');
       movePiece($selected, $target);
       $selected.addClass('empty black');
       $target.addClass('player');
-
-      checkDouble()
-  }
-}
-
-function checkDouble(){
-  if (isJump(src, tgt, compass, isKing) && isEnemy(src, tgt, compass, isKing)){
-    switchBoard();
+      $selected = $target;
+      switchBoard();
+      if (isJump(src, tgt, compass, isKing) && isEnemy(src, tgt, compass, isKing)){
+        console.log("dub jump test")
+        switchBoard();
+      }
   }
 }
 
@@ -125,7 +123,7 @@ function isEnemy(src, tgt, compass, isKing){
 
   var checkX = ((src.x + tgt.x) / 2);
   checkX = checkX.toString();
-  var checkY = ((src.y + tgt.y) / 2).toString();
+  var checkY = ((src.y + tgt.y) / 2);
   checkY = checkY.toString();
   var $middle = $('td[data-x=' + checkX + '][data-y='+ checkY +']');
   console.log($middle[0]);
@@ -133,9 +131,10 @@ function isEnemy(src, tgt, compass, isKing){
 
 
   if ($($middle).hasClass('player')){
-    console.log('current test');
     $($middle).removeClass().addClass('valid empty black');
+    console.log("valid");
     return true;
+
   }
   return false;
 }
@@ -150,4 +149,13 @@ function switchBoard(){
 // is king function
 function isKing(src, tgt, compass){
   return $selected.hasClass('king');
+}
+
+function winGame(){
+  if($('.js').length === 0){
+    alert('Ruby Wins');
+  }
+  else if($('.ruby').length === 0){
+    alert('JS Wins')
+  }
 }
