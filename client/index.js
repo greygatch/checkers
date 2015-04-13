@@ -1,18 +1,14 @@
 'use strict';
 var current = 'chrome';
 var $source;
-var enemy = 'chrome';
+var enemy = 'firefox';
 
 $(document).ready(init);
 
 // start button
-// win animation
-// reset button
-
 function init(){
   initBoard();
   switchUser();
-  winGame();
 
   // only allow active class to be clicked
   $('#board').on('click', '.active', select);
@@ -51,6 +47,7 @@ function drop(){
 
   src.x = $source.data('x') * 1;
   src.y = $source.data('y') * 1;
+
   tgt.x = $target.data('x') * 1;
   tgt.y = $target.data('y') * 1;
 
@@ -68,6 +65,7 @@ function drop(){
       break;
     case 'jump':
 
+      winGame();
       movePiece($source, $target);
       $source.addClass('empty black');
       $target.addClass('player');
@@ -79,41 +77,45 @@ function drop(){
       src.y = $source.data('y') * 1;
 
       // code to check if double jump possible
-      $('td').each(function(e){
-        if ($(this).data('y') === src.y + (compass.north * 2) && ($(this).data('x') === src.x + (compass.east * 2) || $(this).data('x') === src.x + (compass.west * 2))){
-          $target = $(this)[0];
-
-          if ($($target).hasClass('empty')){
-
-            enemy = (current === 'chrome') ? 'chrome' : 'firefox';
-            $('.valid').removeClass('enemy');
-            $('.' + current).addClass('enemy');
-
-            tgt.x = $($target).data('x');
-            tgt.y = $($target).data('y');
-
-            var checkX = ((src.x + tgt.x) / 2);
-            var checkY = ((src.y + tgt.y) / 2);
-            var $middle = $('td[data-x=' + checkX + '][data-y='+ checkY +']');
-            $middle = $middle[0];
-
-            console.log('middle' + $middle[0]);
-
-            console.log('target', $target);
-
-
-
-            if ($($middle).is('.inactive') && $($target).is('.empty')){
-              console.log("dbl jump possible");
-              switchUser();
-            }
-
-          }
-
-        }
-      })
+      doubleJumpCheck(src, tgt, compass, isKing)
       switchUser();
   }
+
+winGame();
+}
+
+function doubleJumpCheck(src, tgt, compass, isKing){
+  var $target;
+
+  $('.valid').each(function(){
+    if ($(this).data('y') === src.y + (compass.north * 2) && ($(this).data('x') === src.x + (compass.east * 2) || $(this).data('x') === src.x + (compass.west * 2))){
+      $target = $(this)[0];
+
+      if ($($target).hasClass('empty')){
+
+        enemy = (current === 'chrome') ? 'chrome' : 'firefox';
+        $('.valid').removeClass('enemy');
+        $('.' + current).addClass('enemy');
+
+        tgt.x = $($target).data('x');
+        tgt.y = $($target).data('y');
+
+        var checkX = ((src.x + tgt.x) / 2);
+        var checkY = ((src.y + tgt.y) / 2);
+        var $middle = $('td[data-x=' + checkX + '][data-y='+ checkY +']');
+        $middle = $middle[0];
+
+        console.log('target', $target);
+
+        if ($($middle).is('.inactive') && $($target).is('.empty')){
+          console.log("dbl jump possible");
+          //
+          switchUser();
+        }
+      }
+    }
+  })
+
 }
 
 function moveType(src, tgt, compass, isKing){
@@ -154,6 +156,7 @@ function isMove(src, tgt, compass, isKing){
 
 function isJump(src, tgt, compass, isKing){
 
+  // //
   var checkEast = compass.east * 2;
   var checkWest = compass.west * 2;
   var checkNorth = compass.north * 2;
@@ -182,7 +185,7 @@ function isEnemy(src, tgt, compass, isKing){
 
 
   if ($($middle).hasClass('player')){
-    $($middle).removeClass().addClass('valid empty black');
+    $($middle).removeClass().addClass('valid empty black inactive');
     return true;
   }
   return false;
