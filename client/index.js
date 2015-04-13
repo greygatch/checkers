@@ -5,6 +5,10 @@ var enemy = 'chrome';
 
 $(document).ready(init);
 
+// start button
+// win animation
+// reset button
+
 function init(){
   initBoard();
   switchUser();
@@ -79,8 +83,6 @@ function drop(){
         if ($(this).data('y') === src.y + (compass.north * 2) && ($(this).data('x') === src.x + (compass.east * 2) || $(this).data('x') === src.x + (compass.west * 2))){
           $target = $(this)[0];
 
-          console.log($target);
-
           if ($($target).hasClass('empty')){
 
             enemy = (current === 'chrome') ? 'chrome' : 'firefox';
@@ -94,16 +96,22 @@ function drop(){
             var checkY = ((src.y + tgt.y) / 2);
             var $middle = $('td[data-x=' + checkX + '][data-y='+ checkY +']');
             $middle = $middle[0];
-            $middle.addClass('enemy')
 
-            if ($($middle).hasClass('enemy player')){
+            console.log('middle' + $middle[0]);
+
+            console.log('target', $target);
+
+
+
+            if ($($middle).is('.inactive') && $($target).is('.empty')){
+              console.log("dbl jump possible");
               switchUser();
             }
 
           }
+
         }
       })
-
       switchUser();
   }
 }
@@ -175,7 +183,6 @@ function isEnemy(src, tgt, compass, isKing){
 
   if ($($middle).hasClass('player')){
     $($middle).removeClass().addClass('valid empty black');
-    console.log("valid jump");
     return true;
   }
   return false;
